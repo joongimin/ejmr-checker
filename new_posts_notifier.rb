@@ -3,7 +3,10 @@ require 'net/smtp'
 # NewPostsNotifier
 class NewPostsNotifier
   def notify(posts)
-    return if posts.empty?
+    if posts.empty?
+      puts 'New posts not found'
+      return
+    end
 
     email_subject = build_email_subject(posts)
     email_content = build_email_content(posts)
@@ -15,6 +18,7 @@ class NewPostsNotifier
 
   # rubocop:disable Metrics/MethodLength
   def send_email(email_addr, subject, content)
+    puts "Sending email `#{subject}` to `#{email_addr}`"
     Aws::SES::Client.new.send_email(
       source: "emjr-checker <#{email_addr}>",
       destination: {
