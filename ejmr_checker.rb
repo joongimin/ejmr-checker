@@ -44,15 +44,18 @@ class EjmrChecker
     @agent.get("#{PAGE_URI}#{page}")
     dom_posts = @agent.page.xpath("//li[contains(@id, 'post-')]")
     dom_posts.map do |dom_post|
-      id = dom_post.attr('id')[5..-1]
+      id = dom_post.attr('id')[5..-1].to_i
       content = dom_post.xpath(".//div[@class='post']").inner_html
       { id: id, content: content }
     end
   end
 
   def filter_new_posts(posts)
-    last_post_index = posts.index { |p| p[:id] == config.last_post_id }
-    last_post_index ? posts[last_post_index + 1..-1] : posts
+    if config.last_post_id
+      posts.select { |p| p[:id] > config.last_post_id }
+    else
+      posts
+    end
   end
 
   def notify_new_posts(posts)
