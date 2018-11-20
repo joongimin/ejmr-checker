@@ -45,10 +45,13 @@ class NewPostsNotifier
     "#{Time.now.strftime('%Y/%m/%d %H:%M:%S')}"
   end
 
+  QUOTE_STYLE = 'border-left: 1px solid black; padding-left: 10px'.freeze
   POST_STYLE = 'border-top: 1px solid black'.freeze
   def build_email_content(posts)
     posts
-      .map { |p| "<div style='#{POST_STYLE}'>#{p[:content]}</div>" }
+      .map { |p| p[:content] }
+      .map { |c| c.gsub('<blockquote>', "<blockquote style='#{QUOTE_STYLE}'>") }
+      .map { |c| "<div style='#{POST_STYLE}'>#{c}</div>" }
       .join
   end
 end
